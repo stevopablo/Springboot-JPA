@@ -34,4 +34,37 @@ public class BookModel implements Serializable {
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ReviewModel review;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public PublisherModel getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(PublisherModel publisher) {
+        this.publisher = publisher;
+    }
+
+    public Set<AuthorModel> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Set<AuthorModel> authors) {
+        this.authors = authors;
+    }
+
+    public ReviewModel getReview() {
+        return review;
+    }
+
+    public void setReview(ReviewModel review) {
+        this.review = review;
+    }
+    
 }
