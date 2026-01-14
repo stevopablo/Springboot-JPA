@@ -14,17 +14,24 @@ jobs:
 
     services:
       mariadb:
-        image: mariadb:latest
+        image: mariadb:10.11
         env:
           MYSQL_ROOT_PASSWORD: senha123
           MYSQL_DATABASE: meubanco
           MYSQL_USER: usuario
           MYSQL_PASSWORD: senha123
+        ports:
+          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+
+    env:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/meubanco
+      SPRING_DATASOURCE_USERNAME: usuario
+      SPRING_DATASOURCE_PASSWORD: senha123
 
     steps:
       - name: Checkout repository
@@ -36,26 +43,11 @@ jobs:
           java-version: "21"
           distribution: 'temurin'
 
-      - name: Wait for MariaDB
-        run: |
-          echo "Waiting for MariaDB to be ready..."
-          for i in {1..30}; do
-            if mysql -h mariadb -u usuario -psenha123 -e "SELECT 1"; then
-              echo "MariaDB is ready!"
-              break
-            fi
-            sleep 2
-          done
-
       - name: Build with Maven
-        run: mvn clean install -B
+        run: mvn clean install
 
       - name: Run tests
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/meubanco
-          SPRING_DATASOURCE_USERNAME: usuario
-          SPRING_DATASOURCE_PASSWORD: senha123
-        run: mvn test -B
+        run: mvn test
 
       - name: Build Docker image
         run: docker build -t my-springboot-app:latest .
