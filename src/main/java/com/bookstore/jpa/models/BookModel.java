@@ -32,7 +32,6 @@ public class BookModel implements Serializable {
     )
     private Set<AuthorModel> authors = new HashSet<>();
 
-    // ✅ Inverse side of One-to-One
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ReviewModel review;
 }
