@@ -1,5 +1,6 @@
 package com.bookstore.jpa.services;
-import java.util.stream.Collector;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -42,5 +43,40 @@ public class BookServices {
         return bookRepository.save(book);
     }
 
-    
+    public BookModel findById(UUID id){
+        return bookRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Book not found"));
+    }
+
+    public List<BookModel> findAll(){
+        return bookRepository.findAll();
+    }
+
+    public BookModel findByTitle(String title) {
+        return bookRepository.findBookModelByTitleContainingIgnoreCase(title);
+    }
+
+    @Transactional
+    public BookModel updateBook(UUID id, BookRecordDto bookRecordDto){
+        BookModel book = bookRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        book.setTitle(bookRecordDto.title());
+        book.setPublisher(
+            publisherRepository.findById(bookRecordDto.publisherid()).orElseThrow(() -> new RuntimeException("Publisher not found")));       
+            
+        book.setAuthors(authorRepository.findAllById(bookRecordDto.authorsIds()).stream().collect(Collectors.toSet()));
+        
+        return bookRepository.save(book);
+
+    }
+
+    @Transactional
+    public void deleteById(UUID id){
+        if(!bookRepository.existsById(id)){
+            throw new RuntimeException("Book not found");
+        }
+
+        bookRepository.deleteById(id);
+    }
 }   

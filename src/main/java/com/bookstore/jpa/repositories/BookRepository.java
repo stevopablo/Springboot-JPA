@@ -8,5 +8,5 @@ import com.bookstore.jpa.models.BookModel;
 
 public interface BookRepository extends JpaRepository<BookModel, UUID>{
 
-    BookModel findBookModelByTitle(String title);
+    BookModel findBookModelByTitleContainingIgnoreCase(String title);
 }
